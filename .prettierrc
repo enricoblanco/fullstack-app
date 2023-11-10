@@ -1,6 +1,7 @@
 {
   "endOfLine": "lf",
-  "semi": false,
+  "comma-dangle": ["error", "never"],
+  "semi": true,
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "none",
