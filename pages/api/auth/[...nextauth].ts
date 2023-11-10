@@ -7,10 +7,24 @@ import prisma from '@/libs/prismadb'
 
 export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
+
+  session: {
+    strategy: 'jwt'
+  },
+
   providers: [
     GoogleProvider({
+      name: 'google',
       clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: `${profile.given_name} ${profile.family_name}`,
+          email: profile.email,
+          role: profile.row ? profile.row : 'USER'
+        }
+      }
     }),
 
     CredentialsProvider({
@@ -53,8 +67,16 @@ export const authOptions: AuthOptions = {
     signIn: '/login'
   },
   debug: process.env.NODE_ENV === 'development',
-  session: {
-    strategy: 'jwt'
+
+  callbacks: {
+    async jwt({ token, user }) {
+      return { ...token, ...user }
+    },
+
+    async session({ session, token }) {
+      session.user.role = token.role
+      return session
+    }
   }
 }
 

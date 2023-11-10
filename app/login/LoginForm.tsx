@@ -8,9 +8,19 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
 import Input from '../components/inputs/Input'
+import Button from '../components/Button'
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
+
+  const googleIcon = (
+    <img
+      className="w-6 h-6"
+      src="https://www.svgrepo.com/show/475656/google-color.svg"
+      loading="lazy"
+      alt="google logo"
+    />
+  )
 
   const router = useRouter()
 
@@ -44,14 +54,28 @@ const LoginForm = () => {
     })
   }
 
+  const googleLogin = async () => {
+    setIsLoading(true)
+
+    signIn('google', {
+      callbackUrl: '/profile',
+      redirect: false
+    }).then(callback => {
+      if (callback?.ok) {
+        router.push('/profile')
+        router.refresh()
+        toast.success('Login realizado com sucesso!')
+      }
+      if (callback?.error) {
+        toast.error(callback.error)
+        setIsLoading(false)
+      }
+    })
+  }
+
   return (
     <>
       <div className="text-4xl">Login</div>
-      <div className="w-full">
-        <button className="bg-blue-500 hover:bg-blue-600 w-full text-white rounded-md px-4 py-2">
-          <div>Login with Google</div>
-        </button>
-      </div>
       <hr className="bg-slate-300 w-full h-px" />
       <Input
         id="email"
@@ -70,6 +94,9 @@ const LoginForm = () => {
         required
         type="password"
       />
+      <Button onClick={googleLogin} icon={googleIcon}>
+        Login with Google
+      </Button>
       <button onClick={handleSubmit(onSubmit)}>
         {isLoading ? 'Loading...' : 'Login'}
       </button>
