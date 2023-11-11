@@ -9,18 +9,10 @@ import toast from 'react-hot-toast'
 
 import Input from '../components/inputs/Input'
 import Button from '../components/Button'
+import GoogleIcon from '../components/icons/GoogleIcon'
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
-
-  const googleIcon = (
-    <img
-      className="w-6 h-6"
-      src="https://www.svgrepo.com/show/475656/google-color.svg"
-      loading="lazy"
-      alt="google logo"
-    />
-  )
 
   const router = useRouter()
 
@@ -94,7 +86,7 @@ const LoginForm = () => {
         required
         type="password"
       />
-      <Button onClick={googleLogin} icon={googleIcon}>
+      <Button onClick={googleLogin} icon={<GoogleIcon />}>
         Login with Google
       </Button>
       <button onClick={handleSubmit(onSubmit)}>

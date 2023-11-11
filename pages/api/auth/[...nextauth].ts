@@ -74,8 +74,39 @@ export const authOptions: AuthOptions = {
     },
 
     async session({ session, token }) {
+      //Get user id from database an set on session
+      const sessionUser = await prisma.user.findUnique({
+        where: { email: session.user?.email as string }
+      })
+      session.user.id = sessionUser?.id as string
+
+      //Set user role on session
       session.user.role = token.role
       return session
+    },
+
+    async signIn({ profile, account }): Promise<string | boolean> {
+      try {
+        if (account?.provider === 'google') {
+          const user = await prisma.user.findUnique({
+            where: { email: profile?.email }
+          })
+
+          if (!user) {
+            await prisma.user.create({
+              data: {
+                email: profile?.email,
+                name: profile?.name,
+                role: 'USER'
+              }
+            })
+          }
+          return true
+        }
+        return true
+      } catch (err) {
+        return false
+      }
     }
   }
 }
