@@ -9,11 +9,19 @@ import axios from 'axios'
 import { signIn } from 'next-auth/react'
 
 import Input from '../components/inputs/Input'
+import Button from '../components/Button'
+import GoogleIcon from '../components/icons/GoogleIcon'
 
+/**
+ * Component for user registration form.
+ * @returns {JSX.Element} The registration form JSX element.
+ */
 const RegisterForm = () => {
+  // State and hook initializations
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
+  // Form initialization using react-hook-form
   const {
     register,
     handleSubmit,
@@ -26,6 +34,12 @@ const RegisterForm = () => {
     }
   })
 
+  /**
+   * Handles form submission.
+   * @param {FieldValues} data - Form data from submission.
+   * @returns {void}
+   * @async
+   */
   const onSubmit: SubmitHandler<FieldValues> = async data => {
     setIsLoading(true)
 
@@ -57,15 +71,36 @@ const RegisterForm = () => {
       })
   }
 
+  const googleLogin = async () => {
+    setIsLoading(true)
+
+    signIn('google', {
+      callbackUrl: '/profile',
+      redirect: false
+    }).then(callback => {
+      if (callback?.ok) {
+        router.push('/profile')
+        router.refresh()
+        toast.success('Login realizado com sucesso!')
+      }
+      if (callback?.error) {
+        toast.error(callback.error)
+        setIsLoading(false)
+      }
+    })
+  }
+
+  // JSX return representing the registration form
   return (
     <>
       <div className="text-4xl">Register</div>
-      <div className="w-full">
-        <button className="bg-blue-500 hover:bg-blue-600 w-full text-white rounded-md px-4 py-2">
-          <div>Sign-Up with Google</div>
-        </button>
+      <div className="w-full flex justify-center">
+        <Button onClick={googleLogin} icon={<GoogleIcon />}>
+          Login with Google
+        </Button>
       </div>
       <hr className="bg-slate-300 w-full h-px" />
+      {/* Input components */}
       <Input
         id="name"
         label="Nome"
@@ -91,9 +126,11 @@ const RegisterForm = () => {
         required
         type="password"
       />
+      {/* Submit button */}
       <button onClick={handleSubmit(onSubmit)}>
         {isLoading ? 'Loading...' : 'Sign-Up'}
       </button>
+      {/* Login link */}
       <p className="text-sm">
         Já tem conta?{' '}
         <Link className="underline" href={'/login'}>
