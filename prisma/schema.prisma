@@ -4,40 +4,67 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Account {
-  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId             String  @db.ObjectId
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.String
-  access_token       String?  @db.String
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.String
-  session_state      String?
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
-
 model User {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
-  email          String?   @unique
+  email          String?      @unique
   emailVerified  DateTime?
   image          String?
   hashedPassword String?
-  createdAt      DateTime? @default(now())
-  updatedAt      DateTime? @updatedAt
+  createdAt      DateTime?    @default(now())
+  updatedAt      DateTime?    @updatedAt
   accounts       Account[]
-  role           Role @default(USER)
+  restIDs        String[]     @db.ObjectId
+  visited        Restaurant[] @relation(fields: [restIDs], references: [id])
+  role           Role         @default(USER)
+  Review         Review[]
+}
+
+model Restaurant {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  image       String
+  address     String
+  visitorsIDs String[]  @db.ObjectId
+  visitors    User[]    @relation(fields: [visitorsIDs], references: [id])
+  reviews     Review[]
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+}
+
+model Review {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  rating     Int
+  comment    String
+  authorID   String     @db.ObjectId
+  author     User       @relation(fields: [authorID], references: [id])
+  restID     String     @db.ObjectId
+  restaurant Restaurant @relation(fields: [restID], references: [id])
+  createdAt  DateTime?  @default(now())
+  updatedAt  DateTime?  @updatedAt
 }
 
 enum Role {
