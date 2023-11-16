@@ -73,6 +73,41 @@ export async function DELETE(req: Request) {
     const body = await req.json()
     const { id } = body
 
+    const usersWithRestaurant = await prisma.user.findMany({
+      where: {
+        restIDs: {
+          has: id
+        }
+      }
+    })
+
+    const updatedUsers = usersWithRestaurant.map(async user => {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          restIDs: {
+            set: user.restIDs.filter(restID => restID !== id)
+          }
+        }
+      })
+    })
+
+    await Promise.all(updatedUsers)
+
+    const reviewsWithRestaurant = await prisma.review.findMany({
+      where: {
+        restID: id
+      }
+    })
+
+    const updatedReviews = reviewsWithRestaurant.map(async review => {
+      await prisma.review.delete({
+        where: { id: review.id }
+      })
+    })
+
+    await Promise.all(updatedReviews)
+
     const restaurant = await prisma.restaurant.delete({
       where: { id }
     })
