@@ -4,15 +4,15 @@ import prisma from '@/libs/prismadb'
 export async function GET({ params }: { params: { id: string } }) {
   try {
     const { id } = params
-    const user = await prisma.user.findUnique({
+    const review = await prisma.review.findUnique({
       where: { id }
     })
 
-    if (!user) {
+    if (!review) {
       return NextResponse.next()
     }
 
-    return NextResponse.json(user)
+    return NextResponse.json(review)
   } catch (error) {
     return NextResponse.json(
       {
