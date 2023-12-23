@@ -69,20 +69,39 @@ export const authOptions: AuthOptions = {
   debug: process.env.NODE_ENV === 'development',
 
   callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user }
+    async jwt({ token, user, session, trigger }) {
+      //Passa o id do usuário para o token
+
+      if (trigger === 'update' && session?.name) {
+        token.name = session.name
+      }
+      if (user) {
+        return {
+          ...token,
+          id: user.id
+        }
+      }
+
+      //update user in the database
+      await prisma.user.update({
+        where: { id: token.id },
+        data: {
+          name: token.name
+        }
+      })
+
+      return token
     },
 
     async session({ session, token }) {
-      //Get user id from database an set on session
-      const sessionUser = await prisma.user.findUnique({
-        where: { email: session.user?.email as string }
-      })
-      session.user.id = sessionUser?.id as string
-
-      //Set user role on session
-      session.user.role = token.role
-      return session
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          name: token.name
+        }
+      }
     },
 
     async signIn({ profile, account }): Promise<string | boolean> {
