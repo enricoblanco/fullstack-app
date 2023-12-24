@@ -2,9 +2,13 @@
 
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 const NavBar = () => {
   const { data: session, status } = useSession()
+  useEffect(() => {
+    console.log(status)
+  }, [status])
 
   return (
     <div className="py-4 text-xl bg-gray-100">
@@ -19,12 +23,16 @@ const NavBar = () => {
         </ul>
       ) : (
         <ul className="flex flex-row justify-evenly">
-          <li>{session.user?.name}</li>
-          <li>{status}</li>
-          <li>
-            <Link href={'/register'}>{session.user?.email}</Link>
+          <li className="hover:text-black">
+            <Link href={'/home'}>Home</Link>
           </li>
-          <li>
+          <li className="hover:text-black">
+            <Link href={'/users'}>Users</Link>
+          </li>
+          <li className="hover:text-black">
+            <Link href={'/profile'}>Profile</Link>
+          </li>
+          <li className="hover:text-black">
             <button
               onClick={() => {
                 signOut().then(() => {
