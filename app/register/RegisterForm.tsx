@@ -30,7 +30,8 @@ const RegisterForm = () => {
     defaultValues: {
       name: '',
       email: '',
-      password: ''
+      password: '',
+      image: ''
     }
   })
 
@@ -109,6 +110,7 @@ const RegisterForm = () => {
         errors={errors}
         required
       />
+
       <Input
         id="email"
         label="E-mail"

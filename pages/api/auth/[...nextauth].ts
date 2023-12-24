@@ -78,13 +78,14 @@ export const authOptions: AuthOptions = {
       if (user) {
         return {
           ...token,
-          id: user.id
+          id: user.id,
+          role: user.role
         }
       }
 
       //update user in the database
       await prisma.user.update({
-        where: { id: token.id },
+        where: { id: token.id as string },
         data: {
           name: token.name
         }
@@ -99,7 +100,8 @@ export const authOptions: AuthOptions = {
         user: {
           ...session.user,
           id: token.id,
-          name: token.name
+          name: token.name,
+          role: token.role
         }
       }
     },

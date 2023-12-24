@@ -46,6 +46,12 @@ const LoginForm = () => {
     })
   }
 
+  const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSubmit(onSubmit)()
+    }
+  }
+
   const googleLogin = async () => {
     setIsLoading(true)
 
@@ -69,29 +75,37 @@ const LoginForm = () => {
     <>
       <div className="text-4xl">Login</div>
       <hr className="bg-slate-300 w-full h-px" />
-      <Input
-        id="email"
-        label="E-mail"
-        disabled={isLoading}
-        register={register}
-        errors={errors}
-        required
-      />
-      <Input
-        id="password"
-        label="Senha"
-        disabled={isLoading}
-        register={register}
-        errors={errors}
-        required
-        type="password"
-      />
+      <form
+        className="flex flex-col gap-4 w-full"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Input
+          id="email"
+          label="E-mail"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+        <Input
+          id="password"
+          label="Senha"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+          type="password"
+        />
+        <button
+          className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+          type="submit"
+        >
+          {isLoading ? 'Loading...' : 'Login'}
+        </button>
+      </form>
       <Button onClick={googleLogin} icon={<GoogleIcon />}>
         Login with Google
       </Button>
-      <button type="submit" onClick={handleSubmit(onSubmit)}>
-        {isLoading ? 'Loading...' : 'Login'}
-      </button>
       <p className="text-sm">
         Não tem conta?{' '}
         <Link className="underline" href={'/register'}>
