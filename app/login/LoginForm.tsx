@@ -89,7 +89,7 @@ const LoginForm = () => {
       <Button onClick={googleLogin} icon={<GoogleIcon />}>
         Login with Google
       </Button>
-      <button onClick={handleSubmit(onSubmit)}>
+      <button type="submit" onClick={handleSubmit(onSubmit)}>
         {isLoading ? 'Loading...' : 'Login'}
       </button>
       <p className="text-sm">
