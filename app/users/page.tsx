@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { User } from '@prisma/client'
+import { NextResponse } from 'next/server'
 
 const Users = () => {
   // Inicialize o estado para armazenar os amigos
@@ -17,7 +18,7 @@ const Users = () => {
         const response = await axios.get('/api/user')
         setusers(response.data)
       } catch (error) {
-        console.error('Erro ao obter amigos:', error)
+        NextResponse.error()
       }
     }
 
@@ -27,8 +28,8 @@ const Users = () => {
   return (
     <div className="">
       {/* Renderize os amigos após a requisição */}
-      {users.map((friend, index) => (
-        <div key={index}>{friend.name}</div>
+      {users.map((user, index) => (
+        <div key={index}>{user.name}</div>
       ))}
     </div>
   )

@@ -1,5 +1,6 @@
 'use client'
 import { useSession } from 'next-auth/react'
+import UpdateInput from '../components/inputs/UpdateInput'
 
 const UserData = () => {
   const { data: status } = useSession()
@@ -20,6 +21,7 @@ const UserData = () => {
           <div>{status?.user.role}</div>
         </div>
       </div>
+      <UpdateInput label="Nome" />
     </div>
   )
 }
