@@ -2,13 +2,9 @@
 
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
-import { useEffect } from 'react'
 
 const NavBar = () => {
-  const { data: session, status } = useSession()
-  useEffect(() => {
-    console.log(status)
-  }, [status])
+  const { data: session } = useSession()
 
   return (
     <div className="py-4 text-xl bg-gray-100">
